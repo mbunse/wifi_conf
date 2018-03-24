@@ -1,0 +1,12 @@
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=GB
+
+network={
+	ssid="Wifi_ssid"
+	#psk="password"
+	psk=e0720d70d27833270aa5ef20e154a33ff310d998ebcce212836935aff489fc6e
+}
+
+
+

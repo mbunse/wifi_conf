@@ -9,7 +9,11 @@ class Wifi_Conf:
         ret = subprocess.check_output(['wpa_passphrase',ssid ,password])
         with open(self.__config_file, "r+") as f:
             conf = "".join(f.readlines())
-            new_conf = re.sub('network={.*?}', ret, conf, flags=re.DOTALL)
+
+        new_conf = re.sub('network={.*?}', ret.decode(), conf, flags=re.DOTALL)
+        with open(self.__config_file, "w") as f:
+           f.write(new_conf)
+            
         return
     def reconfigure(self):
         subprocess.call(['wpa_cli', '-i', 'wlan0', 'reconfigure'])
