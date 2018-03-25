@@ -1,0 +1,20 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+PIDFile=/run/gunicorn/pid
+User=wifi_conf_www
+Group=wifi_conf_www
+EnvironmentFile=/etc/gunicorn/gunicorn.env
+RuntimeDirectory=gunicorn
+WorkingDirectory=${GUNICORN_WORKDIR}
+ExecStart=/usr/bin/gunicorn --pid /run/gunicorn/pid   \
+          --bind localhost:80 ${WSGI_APP}
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
