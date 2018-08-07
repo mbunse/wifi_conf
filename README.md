@@ -1,14 +1,19 @@
-Wifi conf service
-=================
+# Wifi conf service
 
-```
+This python package allows to
+
+
+## Installation
+
+The package requires [`hostapd`](https://en.wikipedia.org/wiki/Hostapd) and [`dnsmasq`](https://en.wikipedia.org/wiki/Dnsmasq) to be installed.
+
+```bash
 sudo apt-get install hostapd
 sudo apt-get install dnsmasq
 sudo systemctl daemon-reload
 ```
 
-Usage
-=====
+## Usage
 
 ```python
 import wifi_conf
@@ -26,3 +31,13 @@ wificonf.set_wifi_ssid_and_password('Wifi_ssid', 'password')
 wificonf.unconfigure_access_point()
 
 ```
+
+## Testing
+
+```bash
+sudo python3 -m unittest test/wifi_conf_test.py
+```
+
+## Security
+
+Currently, the `wifi_conf` user is added to the sudo group to be able to start and stop services connected to setting up an access point. For other solution see https://serverfault.com/questions/841099/systemd-grant-an-unprivileged-user-permission-to-alter-one-specific-service.
