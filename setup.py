@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 setup(
-    name="Wifi_Conf",
+    name="wifi_conf",
     version="0.1dev",
     packages=find_packages(),
-    scripts=['scripts/install_wificonf',
-	     'scripts/uninstall_wificonf'],
+    scripts=['scripts/install_wifi_conf.sh',
+	         'scripts/uninstall_wifi_conf.sh'],
 
     install_requires=[],
 
