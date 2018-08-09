@@ -7,8 +7,7 @@ After=network-online.target syslog.target
 Type=simple
 User=wifi_conf
 Group=wifi_conf
-WorkingDirectory=/usr/bin/wifi_conf/
-ExecStart=/usr/bin/wifi_conf/wifi_conf_daemon.py
+ExecStart=/usr/local/bin/wifi_conf_daemon
 Environment=WIFI_CONF_SOCKET=/var/run/wifi_conf/wifi_conf.socket
 SyslogIdentifier=wifi_conf
 StandardOutput=syslog

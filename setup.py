@@ -1,16 +1,25 @@
 from setuptools import setup, find_packages
+
 setup(
     name="wifi_conf",
     version="0.1dev",
     packages=find_packages(),
-    scripts=['scripts/install_wifi_conf.sh',
+    scripts=['scripts/install_wifi_conf',
 	         'scripts/uninstall_wifi_conf.sh'],
 
-    install_requires=[],
+    entry_points = {
+        "console_scripts": [
+            "wifi_conf_daemon = wifi_conf.wifi_conf_daemon:run_daemon"
+        ]
+    },
 
-    data_files=[('/etc/gunicorn', ['gunicorn.env']),
-                ('/etc/systemd/system', ['gunicorn.service']),
-                ],
+    install_requires=[],
+    package_data={"wifi_conf": [
+        "data/hostapd", 
+        "data/hostapd.conf",
+        "data/dnsmasq.conf", 
+        "data/wifi_conf.service",
+    ]},
 
     # metadata for upload to PyPI
     author="Moritz Bunse",

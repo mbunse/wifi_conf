@@ -5,6 +5,8 @@ import shutil
 import socket
 import struct
 
+from pkg_resources import resource_filename
+
 class Wifi_Conf:
     def __init__(self, 
                  config_file="/etc/wpa_supplicant/wpa_supplicant.conf",
@@ -16,7 +18,7 @@ class Wifi_Conf:
         self.ip_address, self.netmask = Wifi_Conf.cidr_to_netmask(self.ip_address_cidr)
 
     def get_path_for_file(self, filename):
-        return os.path.join(self.conf_dir, filename)
+        return resource_filename(__name__, filename)
 
     def set_wifi_ssid_and_password(self, ssid, password):
         ret = subprocess.check_output(['wpa_passphrase',ssid ,password])

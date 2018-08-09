@@ -1,35 +1,44 @@
 # Wifi conf service
 
-This python package allows to
-
+This python package provides a daemon that can be used to setup an access point for headless wifi configuration.
 
 ## Installation
 
 The package requires [`hostapd`](https://en.wikipedia.org/wiki/Hostapd) and [`dnsmasq`](https://en.wikipedia.org/wiki/Dnsmasq) to be installed.
 
-```bash
+```console
 sudo apt-get install hostapd
 sudo apt-get install dnsmasq
-sudo systemctl daemon-reload
+
+sudo pip install wifi_conf
+
+sudo install_wifi_conf
+```
+
+The status of the daemon can be checked with
+
+```sh
+sudo systemctl status wifi_conf
 ```
 
 ## Usage
 
 ```python
 import wifi_conf
-
-wificonf = wifi_conf.Wifi_Conf()
+from wifi_conf import wifi_conf_client
 
 # configure device as access point
-wificonf.configure_access_point()
 # Access point has ssid `kids_phone`
+wifi_conf_client.start_access_point(ssid="kids_phone")
+
+# Wait some time to see effect
+time.sleep(20)
 
 # Set wifi password
-wificonf.set_wifi_ssid_and_password('Wifi_ssid', 'password')
+wifi_conf_client.set_wifi_ssid_and_password('Wifi_ssid', 'password')
 
 # switch back to wifi client mode
-wificonf.unconfigure_access_point()
-
+wifi_conf_client.stop_access_point()
 ```
 
 ## Testing

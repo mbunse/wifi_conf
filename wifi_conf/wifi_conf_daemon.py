@@ -1,12 +1,12 @@
 import os
 from socket_client_server.socket_client_server import Sock_Server
-import wifi_conf
+from wifi_conf.wifi_conf import Wifi_Conf
 import logging
 
 class Wifi_Conf_Daemon():
     def __init__(self,
                  config_file="/etc/wpa_supplicant/wpa_supplicant.conf"):
-        self.wifi_conf = wifi_conf.Wifi_Conf(config_file)
+        self.wifi_conf = Wifi_Conf(config_file)
 
         server_address = os.getenv("WIFI_CONF_SOCKET", './wifi_conf.sock')
         self.sock_server = Sock_Server(server_address, self.request_handler)
@@ -39,6 +39,15 @@ class Wifi_Conf_Daemon():
         logging.info("exiting Wifi_Conf_Daemon")
         self.sock_server.quit()
         return  
+
+def run_daemon():
+    import time
+    os.getenv("LOG_LEVEL", 'INFO')
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(name)s:%(message)s', datefmt='%d/%m/%Y %I:%M:%S %p')
+
+    daemon = Wifi_Conf_Daemon()
+    time.sleep(1)
+    return
 
 if __name__ == "__main__":
     import time
