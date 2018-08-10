@@ -1,0 +1,20 @@
+[Unit]
+Description=Wifi configuration daemon
+Wants=network-online.target
+After=network-online.target syslog.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/local/bin/wifi_conf_daemon
+# Environment=WIFI_CONF_SOCKET=/var/run/wifi_conf/wifi_conf.socket
+RuntimeDirectory=wifi_conf
+RuntimeDirectoryMode=0777
+SyslogIdentifier=wifi_conf
+StandardOutput=syslog
+StandardError=syslog
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

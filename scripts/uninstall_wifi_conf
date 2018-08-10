@@ -1,0 +1,17 @@
+#!/usr/bin/env python3
+import subprocess
+import os
+
+# disable services
+subprocess.call(["systemctl", "disable", "wifi_conf"])
+subprocess.call(["systemctl", "stop", "wifi_conf"])
+
+# remove service
+os.remove("/etc/systemd/system/wifi_conf.service")
+
+# reload units
+subprocess.call(["systemctl", "daemon-reload"])
+
+# remove dedicated user
+subprocess.call(["userdel", "wifi_conf"])
+subprocess.call(["delgroup", "wifi_conf"])

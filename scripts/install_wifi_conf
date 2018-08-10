@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import os
+import subprocess
+import shutil
+import stat
+import sys
+from pkg_resources import resource_filename
+import pwd
+
+# create dedicated user
+#subprocess.call(["useradd", "-r", "-s", "/bin/false", "wifi_conf"])
+# Grant access to sudo
+# needed to set up wifi
+#subprocess.call(["adduser", "wifi_conf", "sudo"])
+
+# set up service
+service_path = "/etc/systemd/system/wifi_conf.service"
+shutil.copy(resource_filename("wifi_conf", "data/wifi_conf.service"), service_path)
+os.chmod(service_path, 0o444)
+
+# Create dir for socket and assign to kids_phone user
+# socket_path = "/var/run/wifi_conf"
+# os.makedirs(socket_path, mode=0o774, exist_ok=True)
+
+# wifi_conf_user = pwd.getpwnam("wifi_conf")
+# os.chown(socket_path, wifi_conf_user.pw_uid, wifi_conf_user.pw_gid)
+#chmod g+w /var/run/wifi_conf
+
+# reload units
+subprocess.call(["systemctl", "daemon-reload"])
+
+# enable services
+subprocess.call(["systemctl", "enable", "wifi_conf"])
+subprocess.call(["systemctl", "restart", "wifi_conf"])
