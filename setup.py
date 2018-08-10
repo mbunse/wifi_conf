@@ -5,7 +5,7 @@ setup(
     version="0.1dev",
     packages=find_packages(),
     scripts=['scripts/install_wifi_conf',
-	         'scripts/uninstall_wifi_conf.sh'],
+	         'scripts/uninstall_wifi_conf'],
 
     entry_points = {
         "console_scripts": [

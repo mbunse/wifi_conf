@@ -18,9 +18,18 @@ class Wifi_Conf:
         self.ip_address, self.netmask = Wifi_Conf.cidr_to_netmask(self.ip_address_cidr)
 
     def get_path_for_file(self, filename):
-        return resource_filename(__name__, filename)
+        return resource_filename("wifi_conf", os.path.join("data", filename))
 
     def set_wifi_ssid_and_password(self, ssid, password):
+        # https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/ServiceSetID.html
+        # The SSID can consist of up to 32 alphanumeric, case-sensitive, characters.
+        # The first character cannot be the !, #, or ; character.
+        # The +, ], /, ", TAB, and trailing spaces are invalid characters for SSIDs.
+        # https://regex101.com/r/ddZ9zc/17
+        if re.fullmatch(r"^\w[\w!#;\- ]{0,30}[\w!#;\-]$|^\w$", ssid) == None:
+            raise ValueError("SIID is not valid. Should be 32 alphanumeric string")
+        if re.fullmatch(r"^[\w\W]{8-63}$", password, flags=re.ASCII) == None:
+            raise ValueError("Password is not valid. Should be 8-63 character long ASCII string")
         ret = subprocess.check_output(['wpa_passphrase',ssid ,password])
         with open(self.__config_file, "r+") as f:
             conf = "".join(f.readlines())
@@ -47,24 +56,34 @@ class Wifi_Conf:
             raise FileExistsError("/etc/dnsmasq.conf.kids_phone_orig exists. Run Wifi_Conf.unconfigure_access_point() first.")
         if os.path.isfile("/etc/default/hostapd.kids_phone_orig"):
             raise FileExistsError("/etc/default/hostapd.kids_phone_orig exists. Run Wifi_Conf.unconfigure_access_point() first.")
+
         os.rename("/etc/dnsmasq.conf", "/etc/dnsmasq.conf.kids_phone_orig")
         os.rename("/etc/default/hostapd", "/etc/default/hostapd.kids_phone_orig")
-        shutil.copy(self.get_path_for_file("dnsmasq.conf"),
-                    "/etc/dnsmasq.conf")
 
-        # Set SSID in hostapd configuration file
-        with open(self.get_path_for_file("hostapd"), "r") as hostapd_file:
-            updated_hostapd_file_data = (hostapd_file.read()
-                .replace("ssid=kids_phone", "ssid={}".format(ssid)))
+        try:            
+            shutil.copy(self.get_path_for_file("dnsmasq.conf"),
+                        "/etc/dnsmasq.conf")
 
-        with open(self.get_path_for_file("hostapd"), "w") as hostapd_file:
-            hostapd_file.write(updated_hostapd_file_data)
+            # Set SSID in hostapd configuration file
+            with open(self.get_path_for_file("hostapd"), "r") as hostapd_file:
+                updated_hostapd_file_data = (hostapd_file.read()
+                    .replace("ssid=kids_phone", "ssid={}".format(ssid)))
 
-        shutil.copy(self.get_path_for_file("hostapd"),
-                    "/etc/default/hostapd")
-        shutil.copy(self.get_path_for_file("hostapd.conf"),
-                    "/etc/hostapd/hostapd.conf")
+            with open(self.get_path_for_file("hostapd"), "w") as hostapd_file:
+                hostapd_file.write(updated_hostapd_file_data)
 
+            shutil.copy(self.get_path_for_file("hostapd"),
+                        "/etc/default/hostapd")
+            shutil.copy(self.get_path_for_file("hostapd.conf"),
+                        "/etc/hostapd/hostapd.conf")
+
+        except Exception as err:
+            os.rename("/etc/dnsmasq.conf.kids_phone_orig", "/etc/dnsmasq.conf")
+            os.rename("/etc/default/hostapd.kids_phone_orig", "/etc/default/hostapd")
+            if os.path.exists("/etc/hostapd/hostapd.conf"):
+                os.remove("/etc/hostapd/hostapd.conf")
+            raise err
+        
         subprocess.call(['sudo', 'ifconfig', 'wlan0', 'down'])
         subprocess.call(['sudo', 'wpa_cli', 'terminate'])
         subprocess.call(['sudo', 'systemctl', 'enable', 'hostapd'])

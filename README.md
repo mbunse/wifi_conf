@@ -23,6 +23,10 @@ sudo systemctl status wifi_conf
 
 ## Usage
 
+```bash
+export WIFI_CONF_SOCKET=/var/run/wifi_conf/wifi_conf.socket
+```
+
 ```python
 import wifi_conf
 from wifi_conf import wifi_conf_client

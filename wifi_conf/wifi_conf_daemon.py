@@ -2,6 +2,7 @@ import os
 from socket_client_server.socket_client_server import Sock_Server
 from wifi_conf.wifi_conf import Wifi_Conf
 import logging
+import stat
 
 class Wifi_Conf_Daemon():
     def __init__(self,
@@ -9,7 +10,8 @@ class Wifi_Conf_Daemon():
         self.wifi_conf = Wifi_Conf(config_file)
 
         server_address = os.getenv("WIFI_CONF_SOCKET", './wifi_conf.sock')
-        self.sock_server = Sock_Server(server_address, self.request_handler)
+        self.sock_server = Sock_Server(server_address, self.request_handler, 
+                                       add_stat=(stat.S_IWGRP | stat.S_IWOTH))
         self.sock_server.start()
 
     def request_handler(self, data):
