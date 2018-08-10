@@ -1,4 +1,10 @@
 from setuptools import setup, find_packages
+from os import path
+
+# read the contents of your README file
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name="wifi_conf",
@@ -13,7 +19,10 @@ setup(
         ]
     },
 
-    install_requires=[],
+    install_requires=[
+        'python_version>="3.5"',
+        'socket-client-server>="0.5.dev3"',
+    ],
     package_data={"wifi_conf": [
         "data/hostapd", 
         "data/hostapd.conf",
@@ -25,6 +34,8 @@ setup(
     author="Moritz Bunse",
     author_email="moritz.bunse@gmail.com",
     description="Package for setting up AP for configuration of wifi on raspberry pi",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     license="MIT",
     keywords="wifi access point raspberry pi raspbian",
     url="https://github.com/mbunse/wifi_conf",

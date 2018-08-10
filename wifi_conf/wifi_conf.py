@@ -9,8 +9,7 @@ from pkg_resources import resource_filename
 
 class Wifi_Conf:
     def __init__(self, 
-                 config_file="/etc/wpa_supplicant/wpa_supplicant.conf",
-                 ssid="kids_phone"):
+                 config_file="/etc/wpa_supplicant/wpa_supplicant.conf"):
         self.__config_file      = config_file
         self.conf_dir           = os.path.join(os.path.dirname(__file__), "..", "data")
         self.ip_address_cidr    = "192.168.4.1/24"
@@ -65,11 +64,11 @@ class Wifi_Conf:
                         "/etc/dnsmasq.conf")
 
             # Set SSID in hostapd configuration file
-            with open(self.get_path_for_file("hostapd"), "r") as hostapd_file:
+            with open(self.get_path_for_file("hostapd.conf"), "r") as hostapd_file:
                 updated_hostapd_file_data = (hostapd_file.read()
                     .replace("ssid=kids_phone", "ssid={}".format(ssid)))
 
-            with open(self.get_path_for_file("hostapd"), "w") as hostapd_file:
+            with open(self.get_path_for_file("hostapd.conf"), "w") as hostapd_file:
                 hostapd_file.write(updated_hostapd_file_data)
 
             shutil.copy(self.get_path_for_file("hostapd"),

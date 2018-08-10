@@ -23,17 +23,13 @@ sudo systemctl status wifi_conf
 
 ## Usage
 
-```bash
-export WIFI_CONF_SOCKET=/var/run/wifi_conf/wifi_conf.socket
-```
-
 ```python
 import wifi_conf
 from wifi_conf import wifi_conf_client
 
 # configure device as access point
-# Access point has ssid `kids_phone`
-wifi_conf_client.start_access_point(ssid="kids_phone")
+# Access point has ssid `test`
+wifi_conf_client.start_access_point(ssid="test")
 
 # Wait some time to see effect
 time.sleep(20)

@@ -9,7 +9,7 @@ class Wifi_Conf_Daemon():
                  config_file="/etc/wpa_supplicant/wpa_supplicant.conf"):
         self.wifi_conf = Wifi_Conf(config_file)
 
-        server_address = os.getenv("WIFI_CONF_SOCKET", './wifi_conf.sock')
+        server_address = os.getenv("WIFI_CONF_SOCKET", '/var/run/wifi_conf/wifi_conf.socket')
         self.sock_server = Sock_Server(server_address, self.request_handler, 
                                        add_stat=(stat.S_IWGRP | stat.S_IWOTH))
         self.sock_server.start()
@@ -18,17 +18,27 @@ class Wifi_Conf_Daemon():
         try:
             if data["action"] == "configure_access_point":
                 ssid = data["data"]["ssid"]
-                self.wifi_conf.configure_access_point(ssid)
-                return None
+                try:
+                    self.wifi_conf.configure_access_point(ssid)
+                except Exception as err:
+                    return {"status": 1, "message": str(err)}
+                return {"status": 0, "message": "OK"}
+                
             # TODO: request auth data
             elif data["action"] == "unconfigure_access_point":
-                self.wifi_conf.unconfigure_access_point()
-                return None
+                try:
+                    self.wifi_conf.unconfigure_access_point()
+                except Exception as err:
+                    return {"status": 1, "message": str(err)}
+                return {"status": 0, "message": "OK"}
             elif data["action"] == "set_wifi_ssid_and_password":
                 ssid = data["data"]["ssid"]
                 password = data["data"]["password"]
-                self.wifi_conf.set_wifi_ssid_and_password(ssid, password)
-                return None
+                try:
+                    self.wifi_conf.set_wifi_ssid_and_password(ssid, password)
+                except Exception as err:
+                    return {"status": 1, "message": str(err)}
+                return {"status": 0, "message": "OK"}
             elif data["action"] == "quit":
                 self.quit()
                 return None
